@@ -1,1 +1,63 @@
-<h1>EC01 - Alunos</h1>
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cadastro de alunos | DevTech Academy</title>
+  <script src="js/app.js" defer></script>
+</head>
+<body>
+  <main>
+    <h1>DevTech Academy</h1>
+
+    <section>
+      <h2>Cadastro de alunos</h2>
+
+      <form id="formulario-aluno" novalidate>
+        <p>
+          <label for="nome">Nome</label>
+          <input id="nome" name="nome" type="text" required>
+        </p>
+        <p>
+          <label for="idade">Idade</label>
+          <input id="idade" name="idade" type="number" min="1" step="1" required>
+        </p>
+        <p>
+          <label for="curso">Curso</label>
+          <select id="curso" name="curso" required>
+            <option value="">Selecione um curso</option>
+            <option value="JavaScript">JavaScript</option>
+            <option value="Python">Python</option>
+            <option value="Java">Java</option>
+          </select>
+        </p>
+        <p>
+          <label for="nota-final">Nota final</label>
+          <input id="nota-final" name="notaFinal" type="number" step="any" required>
+        </p>
+
+        <p id="erro" role="alert"></p>
+        <button id="salvar" type="submit">Cadastrar</button>
+        <button id="cancelar" type="button" hidden>Cancelar edição</button>
+      </form>
+    </section>
+
+    <section>
+      <h2>Alunos cadastrados</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Nome</th>
+            <th scope="col">Idade</th>
+            <th scope="col">Curso</th>
+            <th scope="col">Nota final</th>
+            <th scope="col">Ações</th>
+          </tr>
+        </thead>
+        <tbody id="linhas-alunos"></tbody>
+      </table>
+    </section>
+  </main>
+</body>
+</html>
