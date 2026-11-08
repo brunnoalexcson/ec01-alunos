@@ -80,7 +80,18 @@ function editarAluno(aluno) {
   campoNome.focus();
 }
 
-function excluirAluno(aluno) {
+const cadastrarAluno = ({ nome, idade, curso, notaFinal }) => {
+  const aluno = new Aluno(nome, idade, curso, notaFinal);
+  alunos.push(aluno);
+  console.log(`Aluno cadastrado: ${aluno.toString()}`);
+};
+
+const atualizarAluno = (aluno, dados) => {
+  Object.assign(aluno, dados);
+  console.log(`Aluno atualizado: ${aluno.toString()}`);
+};
+
+const excluirAluno = (aluno) => {
   const indice = alunos.indexOf(aluno);
   if (indice === -1) return;
 
@@ -88,8 +99,10 @@ function excluirAluno(aluno) {
   if (alunoEmEdicao === aluno) {
     voltarAoCadastro();
   }
+
   renderizarTabela();
-}
+  console.log(`Aluno excluído: ${aluno.toString()}`);
+};
 
 function renderizarTabela() {
   linhasAlunos.replaceChildren();
@@ -101,7 +114,7 @@ function renderizarTabela() {
     return;
   }
 
-  alunos.forEach(function (aluno) {
+  alunos.forEach((aluno) => {
     const linha = linhasAlunos.insertRow();
     linha.insertCell().textContent = aluno.nome;
     linha.insertCell().textContent = aluno.idade;
@@ -109,41 +122,43 @@ function renderizarTabela() {
     linha.insertCell().textContent = aluno.notaFinal;
 
     const acoes = linha.insertCell();
+
     const editar = document.createElement("button");
     editar.type = "button";
     editar.textContent = "Editar";
-    editar.onclick = function () {
+    editar.addEventListener("click", function () {
       editarAluno(aluno);
-    };
+    });
 
     const excluir = document.createElement("button");
     excluir.type = "button";
     excluir.textContent = "Excluir";
-    excluir.onclick = function () {
+    excluir.addEventListener("click", function () {
       excluirAluno(aluno);
-    };
+    });
 
     acoes.append(editar, " ", excluir);
   });
 }
 
-botaoSalvar.onclick = function (evento) {
+botaoSalvar.addEventListener("click", function (evento) {
   evento.preventDefault();
 
   const dados = lerFormulario();
   if (dados === null) return;
 
   if (alunoEmEdicao === null) {
-    const { nome, idade, curso, notaFinal } = dados;
-    alunos.push(new Aluno(nome, idade, curso, notaFinal));
+    cadastrarAluno(dados);
   } else {
-    Object.assign(alunoEmEdicao, dados);
+    atualizarAluno(alunoEmEdicao, dados);
   }
 
   renderizarTabela();
   voltarAoCadastro();
-};
+});
 
-botaoCancelar.onclick = voltarAoCadastro;
+botaoCancelar.addEventListener("click", function () {
+  voltarAoCadastro();
+});
 
 renderizarTabela();
