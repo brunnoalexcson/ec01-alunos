@@ -1,3 +1,20 @@
+class Aluno {
+  constructor(nome, idade, curso, notaFinal) {
+    this.nome = nome;
+    this.idade = idade;
+    this.curso = curso;
+    this.notaFinal = notaFinal;
+  }
+
+  isAprovado() {
+    return this.notaFinal >= 7;
+  }
+
+  toString() {
+    return `${this.nome} | ${this.idade} anos | Curso: ${this.curso} | Nota final: ${this.notaFinal}`;
+  }
+}
+
 const alunos = [];
 let alunoEmEdicao = null;
 
@@ -117,7 +134,8 @@ botaoSalvar.onclick = function (evento) {
   if (dados === null) return;
 
   if (alunoEmEdicao === null) {
-    alunos.push(dados);
+    const { nome, idade, curso, notaFinal } = dados;
+    alunos.push(new Aluno(nome, idade, curso, notaFinal));
   } else {
     Object.assign(alunoEmEdicao, dados);
   }
