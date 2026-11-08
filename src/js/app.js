@@ -16,6 +16,7 @@ class Aluno {
 }
 
 const alunos = [];
+const cursos = ["JavaScript", "Python", "Java"];
 let alunoEmEdicao = null;
 
 const formulario = document.getElementById("formulario-aluno");
@@ -27,6 +28,11 @@ const mensagemErro = document.getElementById("erro");
 const botaoSalvar = document.getElementById("salvar");
 const botaoCancelar = document.getElementById("cancelar");
 const linhasAlunos = document.getElementById("linhas-alunos");
+const listaAprovados = document.getElementById("aprovados");
+const mediaNotas = document.getElementById("media-notas");
+const mediaIdades = document.getElementById("media-idades");
+const listaNomes = document.getElementById("nomes-ordenados");
+const listaCursos = document.getElementById("quantidades-cursos");
 
 function indicarErro(campo, mensagem) {
   mensagemErro.textContent = mensagem;
@@ -48,7 +54,7 @@ function lerFormulario() {
     return indicarErro(campoIdade, "Informe uma idade inteira maior que zero.");
   }
 
-  if (!["JavaScript", "Python", "Java"].includes(curso)) {
+  if (!cursos.includes(curso)) {
     return indicarErro(campoCurso, "Selecione JavaScript, Python ou Java.");
   }
 
@@ -100,7 +106,7 @@ const excluirAluno = (aluno) => {
     voltarAoCadastro();
   }
 
-  renderizarTabela();
+  atualizarPagina();
   console.log(`Aluno excluído: ${aluno.toString()}`);
 };
 
@@ -141,6 +147,53 @@ function renderizarTabela() {
   });
 }
 
+function renderizarLista(lista, textos) {
+  lista.replaceChildren();
+  textos.forEach((texto) => {
+    const item = document.createElement("li");
+    item.textContent = texto;
+    lista.append(item);
+  });
+}
+
+function renderizarRelatorios() {
+  const aprovados = alunos.filter((aluno) => aluno.isAprovado());
+  const dadosAprovados = aprovados.map((aluno) => aluno.toString());
+  renderizarLista(
+    listaAprovados,
+    dadosAprovados.length > 0 ? dadosAprovados : ["Nenhum aluno aprovado."]
+  );
+
+  if (alunos.length === 0) {
+    mediaNotas.textContent = "Não há alunos para calcular a média.";
+    mediaIdades.textContent = "Não há alunos para calcular a média.";
+  } else {
+    const somaNotas = alunos.reduce((soma, aluno) => soma + aluno.notaFinal, 0);
+    const somaIdades = alunos.reduce((soma, aluno) => soma + aluno.idade, 0);
+    const formato = { maximumFractionDigits: 2 };
+
+    mediaNotas.textContent = (somaNotas / alunos.length).toLocaleString("pt-BR", formato);
+    mediaIdades.textContent = (somaIdades / alunos.length).toLocaleString("pt-BR", formato);
+  }
+
+  const nomes = alunos.map((aluno) => aluno.nome);
+  nomes.sort((primeiro, segundo) => primeiro.localeCompare(segundo, "pt-BR"));
+  renderizarLista(listaNomes, nomes.length > 0 ? nomes : ["Nenhum aluno cadastrado."]);
+
+  const contagemInicial = Object.fromEntries(cursos.map((curso) => [curso, 0]));
+  const contagens = alunos.reduce((totais, aluno) => {
+    totais[aluno.curso] += 1;
+    return totais;
+  }, contagemInicial);
+
+  renderizarLista(listaCursos, cursos.map((curso) => `${curso}: ${contagens[curso]}`));
+}
+
+function atualizarPagina() {
+  renderizarTabela();
+  renderizarRelatorios();
+}
+
 botaoSalvar.addEventListener("click", function (evento) {
   evento.preventDefault();
 
@@ -153,7 +206,7 @@ botaoSalvar.addEventListener("click", function (evento) {
     atualizarAluno(alunoEmEdicao, dados);
   }
 
-  renderizarTabela();
+  atualizarPagina();
   voltarAoCadastro();
 });
 
@@ -161,4 +214,4 @@ botaoCancelar.addEventListener("click", function () {
   voltarAoCadastro();
 });
 
-renderizarTabela();
+atualizarPagina();
